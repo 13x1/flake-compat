@@ -8,14 +8,18 @@ like `nix-build` or `nix-shell` to work with a flake.
 
 ## Usage
 
-To use, create a `default.nix` or `shell.nix` file containing the following:
+To use, create a Nix file file containing the following code:
 
 ```nix
 import (fetchGit {
   url = "https://github.com/13x1/flake-compat";
-  rev = "2dc53c70e0b2f1345c87de4721852914c32b777e";
-}) ./default.nix # or ./shell.nix
+  rev = "da05cf0205cc3cea9785a17c0a3c1a1bf9784302";
+}) ./default.nix # replace with current filename
 ```
+
+You can choose any name (and the file can be in any directory in your flake).
+`default.nix` should be used for `nix-build`, and `shell.nix` for `nix-shell`.
+If you only want to support inputs from non-flakes, any name is fine.
 
 ## Changes in this fork
 
