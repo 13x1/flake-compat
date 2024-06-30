@@ -5,6 +5,8 @@
 # containing 'defaultNix' (to be used in 'default.nix'), 'shellNix'
 # (to be used in 'shell.nix').
 
+let old = (
+
 { src, system ? builtins.currentSystem or "unknown-system" }:
 
 let
@@ -236,3 +238,12 @@ in
       // (if result ? devShell.${system} then { default = result.devShell.${system}; } else {})
       // (if result ? devShells.${system}.default then { default = result.devShells.${system}.default; } else {});
   }
+
+); in (arg: with builtins; let 
+  matches = split "/" (toString arg);
+  last = elemAt matches (length matches - 1);
+  output = if last == "default.nix" then "defaultNix"
+    else if last == "shell.nix" then "shellNix"
+    else throw "flake-compat: expected './default.nix' or './shell.nix', got './${last}'";
+  root = arg + "/..";
+in (old {src = root;}).${output})
