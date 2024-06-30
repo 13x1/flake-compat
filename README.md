@@ -1,26 +1,21 @@
 # flake-compat
 
+## Changes in this fork
+
+- *Less boilerplate*: The `default.nix` files you have to put in your repo are not 9 lines
+  of boilerplate anymore.
+- *Remove the empty flake*: You don't have to add an empty input from DetSys anymore.
+  Reading the lockfile manually was a hack and required you to depend on FlakeHub,
+  and yet edolstra's repo was still hardcoded in the default.nix boilerplate.
+  Updating doesn't make sense either, because the default.nix would have to be changed too.
+
 ## Usage
 
-To use, add the following to your `flake.nix`:
+To use, create a `default.nix` or `shell.nix` file containing the following:
 
 ```nix
-inputs.flake-compat.url = "https://flakehub.com/f/edolstra/flake-compat/1.tar.gz";
+import (fetchGit {
+  url = "https://github.com/13x1/flake-compat.git";
+  rev = "2dc53c70e0b2f1345c87de4721852914c32b777e";
+}) ./default.nix # or ./shell.nix
 ```
-
-Afterwards, create a `default.nix` file containing the following:
-
-```nix
-(import
-  (
-    let lock = builtins.fromJSON (builtins.readFile ./flake.lock); in
-    fetchTarball {
-      url = lock.nodes.flake-compat.locked.url or "https://github.com/edolstra/flake-compat/archive/${lock.nodes.flake-compat.locked.rev}.tar.gz";
-      sha256 = lock.nodes.flake-compat.locked.narHash;
-    }
-  )
-  { src = ./.; }
-).defaultNix
-```
-
-If you would like a `shell.nix` file, create one containing the above, replacing `defaultNix` with `shellNix`.
