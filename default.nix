@@ -242,8 +242,8 @@ in
 ); in (arg: with builtins; let 
   matches = split "/" (toString arg);
   last = elemAt matches (length matches - 1);
-  output = if last == "default.nix" then "defaultNix"
-    else if last == "shell.nix" then "shellNix"
-    else throw "flake-compat: expected './default.nix' or './shell.nix', got './${last}'";
-  root = arg + "/..";
-in (old {src = root;}).${output})
+  output = if last == "shell.nix" then "shellNix" else "defaultNix";
+  findRoot = arg: if arg == "/" then throw "flake-compat: could not find flake root"
+    else if pathExists arg + "/flake.lock" then arg
+    else findRoot arg + "/..";
+in (old {src = findRoot arg;}).${output})
